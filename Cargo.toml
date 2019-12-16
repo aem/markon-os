@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 
 [profile.dev]
-panic="abort"
+panic="abort" # disables stack unwinding on panic
 
 [profile.release]
-panic="abort"
+panic="abort" # disables stack unwinding on panic
