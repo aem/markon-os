@@ -11,6 +11,7 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 static HELLO: &[u8] = b"Hello World!";
+static LINE_LENGTH: isize = 160 as isize;
 
 // rust mangles function names by default, can't do
 // that or else linux bindings won't work, system expects _start
@@ -24,6 +25,20 @@ pub extern "C" fn _start() -> ! {
         unsafe {
             *vga_buffer.offset(i as isize * 2) = byte;
             *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
+        }
+    }
+    for (i, &byte) in HELLO.iter().enumerate() {
+        unsafe {
+            let vert_offset = LINE_LENGTH * (i as isize);
+            *vga_buffer.offset(vert_offset) = byte;
+            *vga_buffer.offset(vert_offset + 1) = 0xb;
+        }
+    }
+    for (i, &byte) in HELLO.iter().enumerate() {
+        unsafe {
+            let vert_offset = LINE_LENGTH * (i as isize) + (2 * i as isize);
+            *vga_buffer.offset(vert_offset) = byte;
+            *vga_buffer.offset(vert_offset + 1) = 0xb;
         }
     }
     loop {}
