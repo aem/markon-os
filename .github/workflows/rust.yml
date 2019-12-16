@@ -19,4 +19,4 @@ jobs:
       - name: Release Build
         run: cargo xbuild --verbose --release
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo xtest --verbose
