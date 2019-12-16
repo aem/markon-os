@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Switch to nightly build
+        run: rustup override add nightly
       - name: Install xbuild
         run: cargo install cargo-xbuild
       - name: Install rust source code to rebuild
