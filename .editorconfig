@@ -1,0 +1,3 @@
+# override IDE to match rustfmt's indent settings
+[*.json]
+indent_size = 4
