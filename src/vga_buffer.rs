@@ -1,4 +1,8 @@
 #![allow(dead_code)]
+
+use core::fmt;
+use volatile::Volatile;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Color {
@@ -26,7 +30,7 @@ pub struct ColorCode(u8);
 
 impl ColorCode {
     pub fn new(foreground: Color, background: Color) -> ColorCode {
-        ColorCode(1u8 << 4 | (background as u8) << 4 | foreground as u8)
+        ColorCode((background as u8) << 4 | foreground as u8)
     }
 }
 
@@ -42,7 +46,7 @@ const SCREEN_HEIGHT: usize = 25;
 
 #[repr(transparent)]
 pub struct Buffer {
-    chars: [[VgaChar; SCREEN_WIDTH]; SCREEN_HEIGHT],
+    chars: [[Volatile<VgaChar>; SCREEN_WIDTH]; SCREEN_HEIGHT],
 }
 
 pub struct Writer {
@@ -61,10 +65,10 @@ impl Writer {
                 }
                 let row = SCREEN_HEIGHT - 1;
                 let col = self.column_position;
-                self.buffer.chars[row][col] = VgaChar {
+                self.buffer.chars[row][col].write(VgaChar {
                     character: byte,
                     color_code: self.color_code,
-                };
+                });
                 self.column_position += 1;
             }
         }
@@ -79,5 +83,31 @@ impl Writer {
         }
     }
 
-    fn new_line(&mut self) {}
+    fn clear_line(&mut self, row: usize) {
+        self.column_position = 0;
+        for i in 0..SCREEN_WIDTH {
+            self.buffer.chars[row][i].write(VgaChar {
+                character: 0x20,
+                color_code: ColorCode::new(Color::Black, Color::Black),
+            });
+        }
+    }
+
+    fn new_line(&mut self) {
+        for row in 0..(SCREEN_HEIGHT - 1) {
+            for col in 0..SCREEN_WIDTH {
+                let chatacter = self.buffer.chars[row + 1][col].read();
+                self.buffer.chars[row][col].write(chatacter);
+            }
+        }
+        self.clear_line(SCREEN_HEIGHT - 1);
+        self.column_position = 0;
+    }
+}
+
+impl fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.write_string(s);
+        Ok(())
+    }
 }

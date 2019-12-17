@@ -2,6 +2,7 @@
 #![no_main]
 use core::panic::PanicInfo;
 mod vga_buffer;
+use core::fmt::Write;
 use vga_buffer::{Buffer, Color, ColorCode, Writer};
 
 // Called on panic, global exception handler
@@ -23,5 +24,10 @@ pub extern "C" fn _start() -> ! {
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     };
+
+    for i in 0x21..0x7e {
+        writer.write_byte(i as u8);
+    }
+    write!(writer, "The numbers are {} and {}", 41, 1.0 / 3.0).unwrap();
     loop {}
 }
