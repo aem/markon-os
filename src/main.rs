@@ -2,14 +2,11 @@
 #![no_main]
 use core::panic::PanicInfo;
 mod vga_buffer;
-use core::fmt::Write;
-use vga_buffer::WRITER;
 
 // Called on panic, global exception handler
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    // just loop infinitely for now, no need to do anything
-    // interesting here yet
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
     loop {}
 }
 
@@ -20,8 +17,8 @@ fn panic(_info: &PanicInfo) -> ! {
 // we're exposing a C binding
 pub extern "C" fn _start() -> ! {
     for i in 0x21..0x7e {
-        WRITER.lock().write_byte(i as u8);
+        print!("{}", i as u8 as char);
     }
-    write!(WRITER.lock(), "The numbers are {} and {}", 41, 1.0 / 3.0).unwrap();
-    loop {}
+    println!("The numbers are {} and {}", 41, 1.0 / 3.0);
+    panic!("ah shit it's all borked now innit");
 }
