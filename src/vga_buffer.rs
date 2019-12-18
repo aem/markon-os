@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 use core::fmt;
+use lazy_static::lazy_static;
+use spin::Mutex;
 use volatile::Volatile;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -110,4 +112,12 @@ impl fmt::Write for Writer {
         self.write_string(s);
         Ok(())
     }
+}
+
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::Green, Color::Black),
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    });
 }
