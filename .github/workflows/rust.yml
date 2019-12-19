@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Install QEMU
+        run: brew install qemu
       - name: Switch to nightly build
         run: rustup override add nightly
       - name: Install xbuild
@@ -24,5 +26,5 @@ jobs:
         run: cargo xbuild --verbose --release
       - name: Build bootimage
         run: cargo bootimage
-      # - name: Run tests
-      #   run: cargo xtest --verbose
+      - name: Run tests
+        run: cargo xtest --verbose
