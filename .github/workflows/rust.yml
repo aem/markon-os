@@ -14,8 +14,8 @@ jobs:
         run: rustup override add nightly
       - name: Install xbuild
         run: cargo install cargo-xbuild
-      - name: install bootimage tool
-        run: cargo install bootimage --version "^0.7.7"
+      # - name: install bootimage tool
+      #   run: cargo install bootimage --version "^0.7.7"
       - name: Install rust source code to rebuild
         run: rustup component add rust-src
       - name: Install LLVM tools
@@ -24,7 +24,7 @@ jobs:
         run: cargo xbuild --verbose
       - name: Release Build
         run: cargo xbuild --verbose --release
-      - name: Build bootimage
-        run: cargo bootimage
-      - name: Run tests
-        run: cargo xtest --verbose
+      # - name: Build bootimage
+      #   run: cargo bootimage
+      # - name: Run tests
+      #   run: cargo xtest --verbose
