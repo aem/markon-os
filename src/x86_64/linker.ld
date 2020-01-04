@@ -9,7 +9,7 @@ SECTIONS {
         *(.multiboot_header)
     }
 
-    .text ALIGN (0x1000):
+    .text ALIGN (0x1b000) :
     {
         *(.text)
     }
@@ -24,9 +24,9 @@ SECTIONS {
         *(.data)
     }
 
-    .bas ALIGN (0x1000) :
+    /*.bss ALIGN (0x1000) :
     {
         *(COMMON)
         *(.bss)
-    }
+    }*/
 }
